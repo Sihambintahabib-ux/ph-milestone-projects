@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart with API</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .product, .cart-item { margin-bottom: 10px; }
+    .cart { margin-top: 20px; border-top: 2px solid #ccc; padding-top: 10px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; }
+    button { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Products (from API)</h2>
+  <div id="product-list">Loading...</div>
+
+  <div class="cart">
+    <h3>Cart</h3>
+    <div id="cart-items"><em>Empty</em></div>
+    <p><strong>Total:</strong> $<span id="cart-total">0</span></p>
+  </div>
+
+  <script>
+    var productList = document.getElementById("product-list");
+    var cartItemsDiv = document.getElementById("cart-items");
+    var cartTotal = document.getElementById("cart-total");
+
+    let cart = [];
+
+    // STEP 1: Load product list (search example: iPhone)
+    fetch("https://openapi.programming-hero.com/api/plants")
+      .then(res => res.json())
+      .then(data => {
+        var phones = data.plants // show first 5
+        // var phones = data.data.slice(0, 5); // show first 5
+        productList.innerHTML = "";
+
+        phones.forEach((phone) => {
+          var  div = document.createElement("div");
+          div.className = "product";
+          div.innerHTML = `
+            <strong>${phone.name}</strong> 
+            <button onclick="addToCart('${phone.id}')">Add to Cart</button>
+          `;
+          productList.appendChild(div);
+        });
+      });
+
+    // STEP 2: Fetch product details by ID when adding to cart
+    async function addToCart(productId) {
+      try {
+        var res = await fetch(`https://openapi.programming-hero.com/api/plant/${id}`);
+        var data = await res.json();
+        var product = data.plants;
+
+        // The API doesn’t return price, so generate one
+        var price = Math.floor(Math.random() * 500) + 300;
+
+        // 
+        cart.push({ 
+          id: product.id,
+           name: product.name, 
+           price });
+        // 
+        renderCart();
+      } catch (err) {
+        console.error("Error fetching product:", err);
+      }
+    }
+
+    // STEP 3: Remove product by index
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    // STEP 4: Render cart
+    function renderCart() {
+      cartItemsDiv.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = "<em>Cart is empty</em>";
+      } else {
+        cart.forEach((item, idx) => {
+          total += item.price;
+          var div = document.createElement("div");
+          div.className = "cart-item";
+          div.innerHTML = `
+            ${item.name} — $${item.price}
+            <button onclick="removeFromCart(${idx})">Delete</button>
+          `;
+          cartItemsDiv.appendChild(div);
+        });
+
+
+        
+      }
+
+      cartTotal.textContent = total;
+    }
+  </script>
+</body>
+</html>
