@@ -7,12 +7,23 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import Header from './components/header/Header.jsx';
 import Home from './components/home/Home.jsx';
-
+import Root from './components/Root.jsx';
+import Projects from "./components/project/Projects.jsx"
+import AboutUs from './components/aboutus/AboutUs.jsx';
+import Users from './components/users/Users.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    // element: <div>Element : HELLO FROM REACT ROUTER</div>,
+    // element: <h1>Element : Hello , I am / path root .</h1>,
+    Component : Root,
+    children : [
+      {index:true, Component: Home},
+      { path: 'header' ,Component: Header},
+      { path: 'projects' ,Component: Projects },
+      { path: 'aboutus' ,Component: AboutUs },
+      { path: 'users' ,Component: Users },
+    ]
   },
   {
     path: "app",
